@@ -8,6 +8,7 @@ public class RubyController : MonoBehaviour
 {
     public float speed = 3.0f;
     public int maxHealth = 5;
+    public int maxSpeed = 6;
     public GameObject projectilePrefab;
     public AudioClip throwSound;
     public AudioClip hitSound;
@@ -17,6 +18,7 @@ public class RubyController : MonoBehaviour
     public ParticleSystem HealthBurst;
     public ParticleSystem DamageBurst;
     public float timeInvincible = 2.0f;
+    public GameObject character;
 
     public int scoreValue = 0;
     private int scoreAmount;
@@ -27,7 +29,6 @@ public class RubyController : MonoBehaviour
 
     public GameObject BackgroundMusic;
 
-    bool gameOver;
     bool isInvincible;
 
     float invincibleTimer;
@@ -35,7 +36,12 @@ public class RubyController : MonoBehaviour
     float vertical;
 
     int currentHealth;
+    
+    public bool gameOver;
+    private bool isTriggered = false;
+    private bool goodGameOver = false;
 
+    private TimerController timerController;
 
     Animator animator;
     Vector2 lookDirection = new Vector2(1,0);
@@ -45,6 +51,10 @@ public class RubyController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        GameObject timerControllerObject = GameObject.FindWithTag("Timer");
+        timerController = timerControllerObject.GetComponent<TimerController>();
+
+
         LoseText.gameObject.SetActive(false);
         WinText.gameObject.SetActive(false);
         BackgroundMusic.gameObject.SetActive(true);
@@ -61,7 +71,6 @@ public class RubyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         if (Input.GetKey(KeyCode.R))
         {
             if (gameOver == true)
@@ -116,6 +125,7 @@ public class RubyController : MonoBehaviour
                 }
             }
         }
+        
     }
     
     void FixedUpdate()
@@ -125,6 +135,29 @@ public class RubyController : MonoBehaviour
         position.y = position.y + speed * vertical * Time.deltaTime;
 
         rigidbody2d.MovePosition(position);
+
+        if (timerController.timeHasRunOut = true)
+        {
+            if (goodGameOver == true)
+            {
+
+            }
+            if (goodGameOver == false)
+            {
+                if (gameOver == true)
+                {
+                    if (isTriggered == false)
+                    {
+                        PlaySound(LoseMusic);
+                        isTriggered = true;
+                    }
+                    else
+                    {
+
+                    }
+                }
+            }
+        }
     }
 
     public void ChangeScore(int scoreAmount)
@@ -135,6 +168,7 @@ public class RubyController : MonoBehaviour
 
         if (scoreValue == 4)
         {
+            goodGameOver = true;
             gameOver = true;
             WinText.gameObject.SetActive(true);
             BackgroundMusic.gameObject.SetActive(false);
@@ -142,9 +176,16 @@ public class RubyController : MonoBehaviour
         }
 
     }
+    
+
+    public void ChangeSpeed(int amount)
+        {
+            speed = Mathf.Clamp(currentHealth + amount, 0, maxSpeed);
+        Debug.Log(speed + "/" + maxSpeed);
+        }
 
     public void ChangeHealth(int amount)
-    {
+        {
         if (amount < 0)
         {
             animator.SetTrigger("Hit");
@@ -173,6 +214,7 @@ public class RubyController : MonoBehaviour
             PlaySound(LoseMusic);
             speed = 0.0f;
         }
+    
 
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
         Debug.Log(currentHealth + "/" + maxHealth);

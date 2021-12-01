@@ -6,6 +6,7 @@ TagManager:
   tags:
   - rubyController
   - RubyController
+  - Timer
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - Character
   - Projectile
   - Confiner
-  - 
+  - NonPlayerCharacter
   - 
   - 
   - 
